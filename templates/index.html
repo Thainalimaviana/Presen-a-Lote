@@ -1,59 +1,128 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consulta PresencaBank - Lote</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Presença Bank – Consulta de Margem (Lote)</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #003b18, #009c45);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 950px;
+            background: rgba(0, 0, 0, 0.35);
+            border: 2px solid rgba(0, 255, 0, 0.3);
+            border-radius: 18px;
+            padding: 40px;
+            box-shadow: 0 0 18px rgba(0, 255, 0, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 38px;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        textarea {
+            width: 100%;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.07);
+            color: #fff;
+            border: 1px solid rgba(0, 255, 0, 0.25);
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 16px;
+            resize: none;
+        }
+
+        .botoes {
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn {
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .iniciar {
+            background: #00cc55;
+            color: #fff;
+        }
+
+        .limpar {
+            background: #ff3333;
+            color: #fff;
+        }
+    </style>
+
 </head>
+
 <body>
 
-<div class="container">
+    <div class="container">
+        <h1>🚀 Presença Bank – Consulta de Margem</h1>
 
-    <h1>Consulta de Margem - PresencaBank</h1>
+        <p>CPFs (1 por linha):</p>
 
-    <div class="card">
-        <h2>Importar CPF</h2>
+        <textarea id="cpfs" placeholder="Digite os CPFs aqui..."></textarea>
 
-        <label>Upload CSV</label>
-        <input type="file" id="csvFile" accept=".csv">
-
-        <p class="ou">ou</p>
-
-        <label>Colar CPFs</label>
-        <textarea id="cpfLista" placeholder="Digite ou cole CPFs, um por linha"></textarea>
-
-        <button id="iniciarBtn">Iniciar Lote</button>
-    </div>
-
-
-    <div id="progressoArea" class="card hidden">
-        <h2>Progresso do Lote</h2>
-
-        <div id="progressoTexto">Aguardando...</div>
-
-        <div class="progress-bar">
-            <div id="progressFill"></div>
+        <div class="botoes">
+            <button class="btn iniciar" onclick="iniciarLote()">▶ Iniciar Lote</button>
+            <button class="btn limpar" onclick="document.getElementById('cpfs').value=''">🗑 Limpar</button>
         </div>
 
-        <table id="resultadoTable">
-            <thead>
-                <tr>
-                    <th>CPF</th>
-                    <th>Resultado</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-
-        <br>
-        <button id="baixarExcel">Baixar Excel</button>
-        <button id="baixarCsv">Baixar CSV</button>
+        <p style="margin-top:25px;text-align:center;opacity:0.7;">
+            Sistema de consulta em lote via Webhook – Presença Bank
+        </p>
     </div>
 
-</div>
+    <script>
+        function iniciarLote() {
+            let texto = document.getElementById("cpfs").value.trim();
 
-<script src="{{ url_for('static', filename='main.js') }}"></script>
+            if (!texto) {
+                alert("Digite ao menos 1 CPF!");
+                return;
+            }
+
+            let cpfs = texto.split("\n").map(c => c.trim()).filter(c => c !== "");
+
+            fetch("/iniciar-lote", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cpfs })
+            })
+                .then(r => r.json())
+                .then(d => {
+                    if (!d.lote_id) {
+                        alert("Erro ao iniciar o lote!");
+                        return;
+                    }
+
+                    window.location.href = "/progresso?lote_id=" + d.lote_id;
+                });
+        }
+    </script>
 
 </body>
+
 </html>
