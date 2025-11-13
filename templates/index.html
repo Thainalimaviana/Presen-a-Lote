@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta PresencaBank - Lote</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Consulta de Margem - PresencaBank</h1>
+
+    <div class="card">
+        <h2>Importar CPF</h2>
+
+        <label>Upload CSV</label>
+        <input type="file" id="csvFile" accept=".csv">
+
+        <p class="ou">ou</p>
+
+        <label>Colar CPFs</label>
+        <textarea id="cpfLista" placeholder="Digite ou cole CPFs, um por linha"></textarea>
+
+        <button id="iniciarBtn">Iniciar Lote</button>
+    </div>
+
+
+    <div id="progressoArea" class="card hidden">
+        <h2>Progresso do Lote</h2>
+
+        <div id="progressoTexto">Aguardando...</div>
+
+        <div class="progress-bar">
+            <div id="progressFill"></div>
+        </div>
+
+        <table id="resultadoTable">
+            <thead>
+                <tr>
+                    <th>CPF</th>
+                    <th>Resultado</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <br>
+        <button id="baixarExcel">Baixar Excel</button>
+        <button id="baixarCsv">Baixar CSV</button>
+    </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+
+</body>
+</html>
